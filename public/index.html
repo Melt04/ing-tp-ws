@@ -3,9 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Control MIDI CC - CONFIGURATION</title>
 </head>
 <body>
-    
+    <h1>Visualizador de precioes de acciones</h1>
+    <div>
+        <label for="midiDevice">Ingrese un Tickert para visualizar</label>
+    </div>
+    <div>
+        <input type="text">
+        <button id="sendButton">Buscar</button>
+    </div>
+
+
+    <script>
+        let id;
+        const midiDeviceSelect = document.getElementById('midiDevice');
+        const sendButton = document.getElementById('sendButton');
+        
+        // Conexión WebSocket con el backend
+        const ws = new WebSocket('ws://localhost:3000');
+      
+
+        // Manejar la apertura de la conexión WebSocket
+        function isOpen(ws) { return ws.readyState === ws.OPEN }
+        if (!isOpen(ws)) 
+        {
+            ws.addEventListener('open', (event) => {
+                console.log('Conexión WebSocket abierta');
+                
+            });
+            
+            sendButton.addEventListener('click',()=>{
+                
+                const ticket=document.getElementsByTagName('input')[0].value
+                ws.send(JSON.stringify({ticket,id}))
+            
+            })
+            ws.addEventListener('message', (event) => {
+                
+                const eventParsed= JSON.parse(event.data)
+                if (eventParsed.type=='id'){
+                    id= JSON.parse(event.data).id
+                    console.log(id)
+                }else{
+                    console.log("TICKET")
+                    console.log(eventParsed.ticker)
+                }
+                
+                
+                
+            });
+        };
+
+       
+     
+    </script>
 </body>
 </html>
