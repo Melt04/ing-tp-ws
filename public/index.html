@@ -3,22 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control MIDI CC - CONFIGURATION</title>
+    <title>Consulta de accionces-ticket</title>
 </head>
 <body>
     <h1>Visualizador de precioes de acciones</h1>
     <div>
-        <label for="midiDevice">Ingrese un Tickert para visualizar</label>
+        <label for="ticketText">Ingrese un Tickert para visualizar</label>
     </div>
     <div>
-        <input type="text">
+        <input type="text" id="ticketText">
         <button id="sendButton">Buscar</button>
     </div>
+    <div>
+        <h2 id="statusText">Ingresar Accion a subscribir </h2>
+    </div>
 
+    <div>
+        
+        <div style="display: flex;">
+         <p>Nombre: </p>   <p id="nameText"> </p> 
+        </div>
+        <div style="display: flex;">
+            <p>Precio: </p>   <p id="priceText"> </p> 
+           </div>
+           <div style="display: flex;">
+            <p>Cambio: </p>   <p id="changeText"> </p> 
+           </div>
+           <div style="display: flex;">
+            <p>Fecha: </p>   <p id="timeText"> </p> 
+           </div>
+           <div style="display: flex;">
+            <p>Horario de mercado: </p>   <p id="marketText"> </p> 
+           </div>
+       
+        
+        <p></p>
+        
+    </div>
 
     <script>
+
+
         let id;
-        const midiDeviceSelect = document.getElementById('midiDevice');
+       
         const sendButton = document.getElementById('sendButton');
         
         // Conexión WebSocket con el backend
@@ -35,20 +62,46 @@
             });
             
             sendButton.addEventListener('click',()=>{
-                
-                const ticket=document.getElementsByTagName('input')[0].value
+                const statusText=document.querySelector('#statusText')
+                statusText.textContent='Esperando actualizacion...'
+                const ticketInput=document.getElementsByTagName('input')[0]
+                const ticket=ticketInput.value
                 ws.send(JSON.stringify({ticket,id}))
+                alert(`Subscrito a ${ticket}`)
+                ticketInput.value=''
             
             })
             ws.addEventListener('message', (event) => {
-                
+               
                 const eventParsed= JSON.parse(event.data)
                 if (eventParsed.type=='id'){
                     id= JSON.parse(event.data).id
-                    console.log(id)
+                    
                 }else{
-                    console.log("TICKET")
-                    console.log(eventParsed.ticker)
+                    
+                    const id= eventParsed.ticker.id
+                    const change=eventParsed.ticker.change
+                    const price =eventParsed.ticker.price
+                    const market = eventParsed.ticker.marketHours
+                    const time = eventParsed.ticker.time
+                    const statusText=document.querySelector('#statusText')
+                statusText.textContent=`Actualizado a las ${time}`
+                    const nameText=document.querySelector("#nameText")
+                    const priceText=document.querySelector("#priceText")
+                    const changeText=document.querySelector("#changeText")
+
+                    const timeText=document.querySelector("#timeText")
+                    const marketText=document.querySelector("#marketText")
+
+                    marketText.textContent=market
+                    timeText.textContent= new Date(time)
+                    nameText.textContent=id
+                    priceText.textContent=price
+                    changeText.textContent=change
+                    
+                                      
+                    
+                    
                 }
                 
                 

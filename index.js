@@ -20,6 +20,7 @@ wss.on("connection", async (ws) => {
     const idMessage = JSON.parse(data.toString()).id;
     const ticket = JSON.parse(data.toString()).ticket;
     const stream = new YahooFinanceTicker();
+    console.log(ticket);
     stream.subscribe([ticket], (ticker) => {
       wsArray[idMessage - 1].send(JSON.stringify({ type: "ticket", ticker }));
     });
