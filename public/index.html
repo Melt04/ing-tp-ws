@@ -84,8 +84,10 @@
                     const price =eventParsed.ticker.price
                     const market = eventParsed.ticker.marketHours
                     const time = eventParsed.ticker.time
+                    const formatedTime=new Date(parseInt(time))
+                    
                     const statusText=document.querySelector('#statusText')
-                statusText.textContent=`Actualizado a las ${time}`
+                statusText.textContent=`Actualizado a las ${formatedTime}`
                     const nameText=document.querySelector("#nameText")
                     const priceText=document.querySelector("#priceText")
                     const changeText=document.querySelector("#changeText")
@@ -94,7 +96,7 @@
                     const marketText=document.querySelector("#marketText")
 
                     marketText.textContent=market
-                    timeText.textContent= new Date(time)
+                    timeText.textContent=formatedTime
                     nameText.textContent=id
                     priceText.textContent=price
                     changeText.textContent=change
